@@ -6,74 +6,87 @@
   <title>Aarohi's 3D Adventure</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; -webkit-user-select: none; }
-    body { overflow: hidden; background: #87CEEB; font-family: sans-serif; }
-    #hud { position: fixed; top: 10px; left: 10px; right: 10px; display: flex; justify-content: space-between; align-items: center; pointer-events: none; z-index: 10; }
-    .badge { background: rgba(0, 0, 0, 0.65); color: #fff; padding: 8px 14px; border-radius: 20px; font-size: 14px; font-weight: bold; }
-    #switchBtn { pointer-events: auto; background: #ff9800; color: #fff; border: none; padding: 10px 16px; border-radius: 20px; font-size: 14px; font-weight: bold; }
-    #controls { position: fixed; bottom: 20px; left: 20px; right: 20px; display: flex; justify-content: space-between; align-items: flex-end; z-index: 10; pointer-events: none; }
-    .btn-group { display: flex; gap: 15px; pointer-events: auto; }
-    .ctrl-btn { width: 65px; height: 65px; border-radius: 50%; background: rgba(255, 255, 255, 0.45); border: 3px solid #fff; color: #000; font-size: 24px; font-weight: bold; display: flex; align-items: center; justify-content: center; }
+    body { overflow: hidden; background: #87CEEB; font-family: sans-serif; touch-action: none; }
+    #hud { position: fixed; top: 12px; left: 12px; right: 12px; display: flex; justify-content: space-between; align-items: center; pointer-events: none; z-index: 10; }
+    .badge { background: rgba(0, 0, 0, 0.7); color: #fff; padding: 8px 14px; border-radius: 20px; font-size: 14px; font-weight: bold; }
+    #switchBtn { pointer-events: auto; background: #ff9800; color: #fff; border: none; padding: 10px 16px; border-radius: 20px; font-size: 14px; font-weight: bold; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
+    #joyBase {
+      position: fixed; bottom: 30px; left: 30px; width: 120px; height: 120px;
+      border-radius: 50%; background: rgba(255, 255, 255, 0.25);
+      border: 3px solid rgba(255, 255, 255, 0.7); z-index: 15; touch-action: none;
+    }
+    #joyKnob {
+      position: absolute; top: 35px; left: 35px; width: 44px; height: 44px;
+      border-radius: 50%; background: rgba(40, 40, 40, 0.8);
+      border: 2px solid #fff; pointer-events: none;
+    }
     #msg { position: fixed; top: 55px; left: 50%; transform: translateX(-50%); background: #4caf50; color: white; padding: 8px 18px; border-radius: 20px; font-weight: bold; display: none; z-index: 20; }
   </style>
 </head>
 <body>
   <div id="hud">
-    <div class="badge">Coins: <span id="coinCount">0</span> / 10</div>
-    <button id="switchBtn">Switch: Jeep / Cycle</button>
+    <div class="badge">🪙 Coins: <span id="coinCount">0</span> / 10</div>
+    <button id="switchBtn">🚙 Switch: Jeep / Cycle</button>
   </div>
-  <div id="msg">Shabbas Aarohi! All Coins Collected!</div>
-  <div id="controls">
-    <div class="btn-group">
-      <div class="ctrl-btn" id="leftBtn">◀</div>
-      <div class="ctrl-btn" id="rightBtn">▶</div>
-    </div>
-    <div class="btn-group">
-      <div class="ctrl-btn" id="downBtn">▼</div>
-      <div class="ctrl-btn" id="upBtn">▲</div>
-    </div>
-  </div>
+  <div id="msg">🎉 शाब्बास आरोही! सर्व नाणी गोळा केली!</div>
+  <div id="joyBase"><div id="joyKnob"></div></div>
 
   <script>
     const s = document.createElement('script');
-     s.src = 'https://cdnjs.cloudflare.' + 'com/ajax/libs/three.js/r128/three.min.js';
+    s.src = 'https://cdnjs.cloudflare.' + 'com/ajax/libs/three.js/r128/three.min.js';
     s.onload = initGame;
     document.head.appendChild(s);
 
     function initGame() {
       const scene = new THREE.Scene();
       scene.background = new THREE.Color(0x87CEEB);
-      scene.fog = new THREE.Fog(0x87CEEB, 40, 180);
+      scene.fog = new THREE.Fog(0x87CEEB, 45, 200);
 
       const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 300);
       const renderer = new THREE.WebGLRenderer({ antialias: true });
       renderer.setSize(window.innerWidth, window.innerHeight);
       document.body.appendChild(renderer.domElement);
 
-      scene.add(new THREE.HemisphereLight(0xffffff, 0x444444, 0.9));
-      const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
-      dirLight.position.set(30, 50, 30);
+      scene.add(new THREE.HemisphereLight(0xffffff, 0x444444, 0.95));
+      const dirLight = new THREE.DirectionalLight(0xffffff, 0.85);
+      dirLight.position.set(30, 60, 30);
       scene.add(dirLight);
 
-      const ground = new THREE.Mesh(new THREE.PlaneGeometry(300, 300), new THREE.MeshLambertMaterial({ color: 0x4CAF50 }));
+      const ground = new THREE.Mesh(new THREE.PlaneGeometry(320, 320), new THREE.MeshLambertMaterial({ color: 0x43A047 }));
       ground.rotation.x = -Math.PI / 2;
       scene.add(ground);
 
-      const road = new THREE.Mesh(new THREE.PlaneGeometry(10, 140), new THREE.MeshLambertMaterial({ color: 0x333333 }));
+      const road = new THREE.Mesh(new THREE.PlaneGeometry(11, 145), new THREE.MeshLambertMaterial({ color: 0x37474F }));
       road.rotation.x = -Math.PI / 2;
       road.position.set(0, 0.02, -30);
       scene.add(road);
 
-      const mudTrack = new THREE.Mesh(new THREE.PlaneGeometry(40, 120), new THREE.MeshLambertMaterial({ color: 0x8D6E63 }));
+      const mudTrack = new THREE.Mesh(new THREE.PlaneGeometry(42, 125), new THREE.MeshLambertMaterial({ color: 0x795548 }));
       mudTrack.rotation.x = -Math.PI / 2;
-      mudTrack.position.set(35, 0.03, -20);
+      mudTrack.position.set(36, 0.03, -20);
       scene.add(mudTrack);
 
       const bumps = new Array();
       for (let i = 0; i < 6; i++) {
-        const bump = new THREE.Mesh(new THREE.CylinderGeometry(4, 7, 2.2, 12), new THREE.MeshLambertMaterial({ color: 0x6D4C41 }));
-        bump.position.set(35 + (i % 2 === 0 ? -6 : 6), 0.8, 20 - i * 18);
+        const bump = new THREE.Mesh(new THREE.CylinderGeometry(4, 7.5, 2.3, 14), new THREE.MeshLambertMaterial({ color: 0x5D4037 }));
+        bump.position.set(36 + (i % 2 === 0 ? -6 : 6), 0.8, 20 - i * 18);
         scene.add(bump);
         bumps.push(bump);
+      }
+
+      function addTree(x, z) {
+        const tree = new THREE.Group();
+        const trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.4, 0.6, 3, 8), new THREE.MeshLambertMaterial({ color: 0x5D4037 }));
+        trunk.position.y = 1.5;
+        const leaves = new THREE.Mesh(new THREE.ConeGeometry(2.5, 5, 10), new THREE.MeshLambertMaterial({ color: 0x2E7D32 }));
+        leaves.position.y = 4.5;
+        tree.add(trunk, leaves);
+        tree.position.set(x, 0, z);
+        scene.add(tree);
+      }
+      for (let z = 20; z >= -80; z -= 20) {
+        addTree(-9, z);
+        addTree(9, z);
       }
 
       const home = new THREE.Group();
@@ -82,58 +95,136 @@
       const homeRoof = new THREE.Mesh(new THREE.ConeGeometry(8, 4, 4), new THREE.MeshLambertMaterial({ color: 0xD84315 }));
       homeRoof.position.y = 8;
       homeRoof.rotation.y = Math.PI / 4;
-      home.add(homeBody, homeRoof);
-      home.position.set(-12, 0, 25);
+      const homeDoor = new THREE.Mesh(new THREE.BoxGeometry(2, 3.5, 0.3), new THREE.MeshLambertMaterial({ color: 0x4E342E }));
+      homeDoor.position.set(0, 1.75, 5.1);
+      home.add(homeBody, homeRoof, homeDoor);
+      home.position.set(-14, 0, 25);
       scene.add(home);
 
       const school = new THREE.Group();
-      const schoolBody = new THREE.Mesh(new THREE.BoxGeometry(22, 9, 12), new THREE.MeshLambertMaterial({ color: 0xFF7043 }));
-      schoolBody.position.y = 4.5;
-      const schoolBoard = new THREE.Mesh(new THREE.BoxGeometry(8, 2, 0.5), new THREE.MeshLambertMaterial({ color: 0x1E88E5 }));
-      schoolBoard.position.set(0, 7.5, 6.2);
-      school.add(schoolBody, schoolBoard);
-      school.position.set(0, 0, -95);
+      const schoolBody = new THREE.Mesh(new THREE.BoxGeometry(24, 10, 12), new THREE.MeshLambertMaterial({ color: 0xFF7043 }));
+      schoolBody.position.y = 5;
+      const schoolDoor = new THREE.Mesh(new THREE.BoxGeometry(3.5, 4.5, 0.4), new THREE.MeshLambertMaterial({ color: 0x3E2723 }));
+      schoolDoor.position.set(0, 2.25, 6.1);
+      const schoolBoard = new THREE.Mesh(new THREE.BoxGeometry(10, 2.2, 0.5), new THREE.MeshLambertMaterial({ color: 0x1565C0 }));
+      schoolBoard.position.set(0, 8, 6.2);
+      school.add(schoolBody, schoolDoor, schoolBoard);
+      school.position.set(0, 0, -96);
       scene.add(school);
-            function createKid(shirtColor, x, z) {
-        const kid = new THREE.Group();
-        const body = new THREE.Mesh(new THREE.CylinderGeometry(0.45, 0.45, 1.4, 12), new THREE.MeshLambertMaterial({ color: shirtColor }));
-        body.position.y = 1.1;
-        const head = new THREE.Mesh(new THREE.SphereGeometry(0.4, 12, 12), new THREE.MeshLambertMaterial({ color: 0xFFCCBC }));
-        head.position.y = 2.1;
-        kid.add(body, head);
-        kid.position.set(x, 0, z);
-        scene.add(kid);
-        return kid;
+            function createPerson(shirtColor, pantsColor, x, z) {
+        const person = new THREE.Group();
+        const skin = new THREE.MeshLambertMaterial({ color: 0xFFCCBC });
+        const shirt = new THREE.MeshLambertMaterial({ color: shirtColor });
+        const pants = new THREE.MeshLambertMaterial({ color: pantsColor });
+        const hairMat = new THREE.MeshLambertMaterial({ color: 0x212121 });
+
+        const legGeo = new THREE.CylinderGeometry(0.14, 0.12, 0.85, 8);
+        const leftLeg = new THREE.Mesh(legGeo, pants);
+        leftLeg.position.set(-0.2, 0.42, 0);
+        const rightLeg = new THREE.Mesh(legGeo, pants);
+        rightLeg.position.set(0.2, 0.42, 0);
+
+        const torso = new THREE.Mesh(new THREE.BoxGeometry(0.65, 0.85, 0.35), shirt);
+        torso.position.y = 1.25;
+
+        const armGeo = new THREE.CylinderGeometry(0.11, 0.1, 0.75, 8);
+        const leftArm = new THREE.Mesh(armGeo, skin);
+        leftArm.position.set(-0.46, 1.25, 0);
+        const rightArm = new THREE.Mesh(armGeo, skin);
+        rightArm.position.set(0.46, 1.25, 0);
+
+        const head = new THREE.Mesh(new THREE.SphereGeometry(0.32, 12, 12), skin);
+        head.position.y = 1.98;
+        const hair = new THREE.Mesh(new THREE.SphereGeometry(0.34, 12, 12, 0, Math.PI * 2, 0, Math.PI * 0.55), hairMat);
+        hair.position.y = 2.02;
+
+        person.add(leftLeg, rightLeg, torso, leftArm, rightArm, head, hair);
+        person.position.set(x, 0, z);
+        scene.add(person);
+        return person;
       }
 
-      createKid(0x2196F3, -5, -82);
-      createKid(0xE91E63, -2, -83);
-      createKid(0x9C27B0, 3, -82);
-      createKid(0xFFEB3B, 6, -84);
+      createPerson(0x1E88E5, 0x263238, -5, -83);
+      createPerson(0xE91E63, 0x37474F, -2, -84);
+      createPerson(0x8E24AA, 0x1A237E, 3, -83);
+      createPerson(0xFDD835, 0x3E2723, 6, -85);
 
+      // Detailed German Shepherd Dog
       const dog = new THREE.Group();
-      const dogBody = new THREE.Mesh(new THREE.BoxGeometry(0.7, 0.7, 1.5), new THREE.MeshLambertMaterial({ color: 0x212121 }));
-      dogBody.position.y = 0.6;
-      const dogHead = new THREE.Mesh(new THREE.BoxGeometry(0.55, 0.55, 0.6), new THREE.MeshLambertMaterial({ color: 0xD7A86E }));
-      dogHead.position.set(0, 1.0, -0.8);
-      dog.add(dogBody, dogHead);
+      const blackMat = new THREE.MeshLambertMaterial({ color: 0x1C1C1C });
+      const tanMat = new THREE.MeshLambertMaterial({ color: 0xC68B59 });
+
+      const dBody = new THREE.Mesh(new THREE.BoxGeometry(0.55, 0.55, 1.3), blackMat);
+      dBody.position.y = 0.65;
+      const dChest = new THREE.Mesh(new THREE.BoxGeometry(0.56, 0.52, 0.5), tanMat);
+      dChest.position.set(0, 0.65, -0.45);
+
+      const dHead = new THREE.Mesh(new THREE.BoxGeometry(0.45, 0.45, 0.55), tanMat);
+      dHead.position.set(0, 1.05, -0.75);
+      const dSnout = new THREE.Mesh(new THREE.BoxGeometry(0.25, 0.22, 0.35), blackMat);
+      dSnout.position.set(0, 0.96, -1.1);
+
+      const earGeo = new THREE.ConeGeometry(0.1, 0.28, 6);
+      const earL = new THREE.Mesh(earGeo, blackMat);
+      earL.position.set(-0.15, 1.38, -0.7);
+      const earR = new THREE.Mesh(earGeo, blackMat);
+      earR.position.set(0.15, 1.38, -0.7);
+
+      const dTail = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.08, 0.7, 6), blackMat);
+      dTail.position.set(0, 0.75, 0.8);
+      dTail.rotation.x = 0.6;
+
+      const dLegGeo = new THREE.CylinderGeometry(0.08, 0.07, 0.5, 6);
+      const dl1 = new THREE.Mesh(dLegGeo, tanMat); dl1.position.set(-0.2, 0.25, -0.45);
+      const dl2 = new THREE.Mesh(dLegGeo, tanMat); dl2.position.set(0.2, 0.25, -0.45);
+      const dl3 = new THREE.Mesh(dLegGeo, tanMat); dl3.position.set(-0.2, 0.25, 0.45);
+      const dl4 = new THREE.Mesh(dLegGeo, tanMat); dl4.position.set(0.2, 0.25, 0.45);
+
+      dog.add(dBody, dChest, dHead, dSnout, earL, earR, dTail, dl1, dl2, dl3, dl4);
       dog.position.set(-3, 0, 22);
       scene.add(dog);
 
+      // Player Vehicle (Detailed Cycle & Jeep)
       const player = new THREE.Group();
+
       const cycleGroup = new THREE.Group();
-      const frame = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.8, 2.0), new THREE.MeshLambertMaterial({ color: 0x00BCD4 }));
-      frame.position.y = 0.9;
-      const rider = createKid(0xFF1744, 0, 0.3);
-      rider.position.y = 0.3;
-      cycleGroup.add(frame, rider);
+      const wheelGeo = new THREE.TorusGeometry(0.48, 0.09, 8, 18);
+      const tireMat = new THREE.MeshLambertMaterial({ color: 0x111111 });
+      const frontWheel = new THREE.Mesh(wheelGeo, tireMat);
+      frontWheel.rotation.y = Math.PI / 2;
+      frontWheel.position.set(0, 0.52, -0.85);
+      const backWheel = new THREE.Mesh(wheelGeo, tireMat);
+      backWheel.rotation.y = Math.PI / 2;
+      backWheel.position.set(0, 0.52, 0.85);
+
+      const frameBar = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.06, 1.6, 8), new THREE.MeshLambertMaterial({ color: 0x00BCD4 }));
+      frameBar.rotation.x = Math.PI / 2;
+      frameBar.position.set(0, 0.8, 0);
+      const handleBar = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.05, 0.9, 8), new THREE.MeshLambertMaterial({ color: 0xECEFF1 }));
+      handleBar.rotation.z = Math.PI / 2;
+      handleBar.position.set(0, 1.25, -0.75);
+
+      const rider = createPerson(0xFF1744, 0x1565C0, 0, 0.15);
+      rider.position.y = 0.45;
+      cycleGroup.add(frontWheel, backWheel, frameBar, handleBar, rider);
 
       const jeepGroup = new THREE.Group();
-      const jeepBody = new THREE.Mesh(new THREE.BoxGeometry(2.4, 1.2, 4.0), new THREE.MeshLambertMaterial({ color: 0x2E7D32 }));
-      jeepBody.position.y = 1.0;
-      const jeepCabin = new THREE.Mesh(new THREE.BoxGeometry(2.1, 1.0, 2.0), new THREE.MeshLambertMaterial({ color: 0x1B5E20 }));
-      jeepCabin.position.set(0, 2.0, 0.3);
-      jeepGroup.add(jeepBody, jeepCabin);
+      const jeepBody = new THREE.Mesh(new THREE.BoxGeometry(2.3, 1.0, 4.0), new THREE.MeshLambertMaterial({ color: 0x2E7D32 }));
+      jeepBody.position.y = 0.95;
+      const jeepCabin = new THREE.Mesh(new THREE.BoxGeometry(2.0, 0.95, 2.0), new THREE.MeshLambertMaterial({ color: 0x1B5E20 }));
+      jeepCabin.position.set(0, 1.9, 0.35);
+
+      const jWheelGeo = new THREE.CylinderGeometry(0.55, 0.55, 0.45, 16);
+      const jw1 = new THREE.Mesh(jWheelGeo, tireMat); jw1.rotation.z = Math.PI / 2; jw1.position.set(-1.2, 0.55, -1.25);
+      const jw2 = new THREE.Mesh(jWheelGeo, tireMat); jw2.rotation.z = Math.PI / 2; jw2.position.set(1.2, 0.55, -1.25);
+      const jw3 = new THREE.Mesh(jWheelGeo, tireMat); jw3.rotation.z = Math.PI / 2; jw3.position.set(-1.2, 0.55, 1.25);
+      const jw4 = new THREE.Mesh(jWheelGeo, tireMat); jw4.rotation.z = Math.PI / 2; jw4.position.set(1.2, 0.55, 1.25);
+
+      const lightMat = new THREE.MeshBasicMaterial({ color: 0xFFF59D });
+      const hl1 = new THREE.Mesh(new THREE.SphereGeometry(0.18, 8, 8), lightMat); hl1.position.set(-0.75, 1.0, -2.02);
+      const hl2 = new THREE.Mesh(new THREE.SphereGeometry(0.18, 8, 8), lightMat); hl2.position.set(0.75, 1.0, -2.02);
+
+      jeepGroup.add(jeepBody, jeepCabin, jw1, jw2, jw3, jw4, hl1, hl2);
       jeepGroup.visible = false;
 
       player.add(cycleGroup, jeepGroup);
@@ -148,7 +239,7 @@
       });
 
       const coins = new Array();
-      const cx = new Array(0, 0, 0, 0, 0, 35, 35, 41, 29, 35);
+      const cx = new Array(0, 0, 0, 0, 0, 36, 36, 42, 30, 36);
       const cz = new Array(10, -10, -35, -60, -80, 10, -5, -18, -36, -55);
       for (let i = 0; i < 10; i++) {
         const coin = new THREE.Mesh(new THREE.CylinderGeometry(0.8, 0.8, 0.25, 16), new THREE.MeshLambertMaterial({ color: 0xFFD700 }));
@@ -158,18 +249,35 @@
         coins.push(coin);
       }
 
-      const keys = { up: false, down: false, left: false, right: false };
-      function bindBtn(id, key) {
-        const el = document.getElementById(id);
-        el.addEventListener('touchstart', (e) => { e.preventDefault(); keys[key] = true; });
-        el.addEventListener('touchend', (e) => { e.preventDefault(); keys[key] = false; });
-        el.addEventListener('mousedown', () => keys[key] = true);
-        el.addEventListener('mouseup', () => keys[key] = false);
+      // Virtual Joystick Logic
+      const joyBase = document.getElementById('joyBase');
+      const joyKnob = document.getElementById('joyKnob');
+      let joyX = 0, joyY = 0, touching = false;
+
+      function handleJoy(e) {
+        const touch = e.touches ? e.touches.item(0) : e;
+        const rect = joyBase.getBoundingClientRect();
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
+        let dx = touch.clientX - centerX;
+        let dy = touch.clientY - centerY;
+        const dist = Math.hypot(dx, dy);
+        const maxDist = 40;
+        if (dist > maxDist) {
+          dx = (dx / dist) * maxDist;
+          dy = (dy / dist) * maxDist;
+        }
+        joyKnob.style.transform = `translate(${dx}px, ${dy}px)`;
+        joyX = dx / maxDist;
+        joyY = dy / maxDist;
       }
-      bindBtn('upBtn', 'up');
-      bindBtn('downBtn', 'down');
-      bindBtn('leftBtn', 'left');
-      bindBtn('rightBtn', 'right');
+
+      joyBase.addEventListener('touchstart', (e) => { touching = true; handleJoy(e); });
+      joyBase.addEventListener('touchmove', (e) => { if (touching) handleJoy(e); });
+      joyBase.addEventListener('touchend', () => {
+        touching = false; joyX = 0; joyY = 0;
+        joyKnob.style.transform = 'translate(0px, 0px)';
+      });
 
       let speed = 0;
       let score = 0;
@@ -177,13 +285,15 @@
       function animate() {
         requestAnimationFrame(animate);
         const maxSpeed = isJeep ? 0.55 : 0.35;
-        if (keys.up) speed = Math.min(speed + 0.02, maxSpeed);
-        else if (keys.down) speed = Math.max(speed - 0.02, -0.2);
-        else speed *= 0.92;
 
-        if (Math.abs(speed) > 0.01) {
-          if (keys.left) player.rotation.y += 0.04;
-          if (keys.right) player.rotation.y -= 0.04;
+        if (Math.abs(joyY) > 0.1) {
+          speed = -joyY * maxSpeed;
+        } else {
+          speed *= 0.9;
+        }
+
+        if (Math.abs(joyX) > 0.1 && Math.abs(speed) > 0.02) {
+          player.rotation.y -= joyX * 0.045 * (speed > 0 ? 1 : -1);
         }
 
         player.position.x -= Math.sin(player.rotation.y) * speed;
@@ -221,3 +331,4 @@
   </script>
 </body>
 </html>
+
