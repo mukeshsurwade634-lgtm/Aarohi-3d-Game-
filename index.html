@@ -7,48 +7,21 @@
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; -webkit-user-select: none; }
     body { overflow: hidden; background: #87CEEB; font-family: sans-serif; }
-    #hud {
-      position: fixed; top: 10px; left: 10px; right: 10px;
-      display: flex; justify-content: space-between; align-items: center;
-      pointer-events: none; z-index: 10;
-    }
-    .badge {
-      background: rgba(0, 0, 0, 0.65); color: #fff; padding: 8px 14px;
-      border-radius: 20px; font-size: 14px; font-weight: bold;
-    }
-    #switchBtn {
-      pointer-events: auto; background: #ff9800; color: #fff; border: none;
-      padding: 10px 16px; border-radius: 20px; font-size: 14px; font-weight: bold;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-    }
-    #controls {
-      position: fixed; bottom: 20px; left: 20px; right: 20px;
-      display: flex; justify-content: space-between; align-items: flex-end;
-      z-index: 10; pointer-events: none;
-    }
+    #hud { position: fixed; top: 10px; left: 10px; right: 10px; display: flex; justify-content: space-between; align-items: center; pointer-events: none; z-index: 10; }
+    .badge { background: rgba(0, 0, 0, 0.65); color: #fff; padding: 8px 14px; border-radius: 20px; font-size: 14px; font-weight: bold; }
+    #switchBtn { pointer-events: auto; background: #ff9800; color: #fff; border: none; padding: 10px 16px; border-radius: 20px; font-size: 14px; font-weight: bold; }
+    #controls { position: fixed; bottom: 20px; left: 20px; right: 20px; display: flex; justify-content: space-between; align-items: flex-end; z-index: 10; pointer-events: none; }
     .btn-group { display: flex; gap: 15px; pointer-events: auto; }
-    .ctrl-btn {
-      width: 65px; height: 65px; border-radius: 50%;
-      background: rgba(255, 255, 255, 0.35); border: 3px solid #fff;
-      color: #000; font-size: 24px; font-weight: bold;
-      display: flex; align-items: center; justify-content: center;
-      backdrop-filter: blur(4px);
-    }
-    .ctrl-btn:active { background: rgba(255, 255, 255, 0.8); transform: scale(0.95); }
-    #msg {
-      position: fixed; top: 55px; left: 50%; transform: translateX(-50%);
-      background: #4caf50; color: white; padding: 8px 18px; border-radius: 20px;
-      font-weight: bold; display: none; z-index: 20;
-    }
+    .ctrl-btn { width: 65px; height: 65px; border-radius: 50%; background: rgba(255, 255, 255, 0.45); border: 3px solid #fff; color: #000; font-size: 24px; font-weight: bold; display: flex; align-items: center; justify-content: center; }
+    #msg { position: fixed; top: 55px; left: 50%; transform: translateX(-50%); background: #4caf50; color: white; padding: 8px 18px; border-radius: 20px; font-weight: bold; display: none; z-index: 20; }
   </style>
 </head>
 <body>
   <div id="hud">
-    <div class="badge">🪙 Coins: <span id="coinCount">0</span> / 10</div>
-    <button id="switchBtn">🚲 Switch: Jeep / Cycle</button>
+    <div class="badge">Coins: <span id="coinCount">0</span> / 10</div>
+    <button id="switchBtn">Switch: Jeep / Cycle</button>
   </div>
-  <div id="msg">🎉 शाब्बास आरोही! सर्व नाणी गोळा केली!</div>
-
+  <div id="msg">Shabbas Aarohi! All Coins Collected!</div>
   <div id="controls">
     <div class="btn-group">
       <div class="ctrl-btn" id="leftBtn">◀</div>
@@ -60,208 +33,191 @@
     </div>
   </div>
 
-  <script src="https://cloudflare.com"></script>
   <script>
-    const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x87CEEB);
-    scene.fog = new THREE.Fog(0x87CEEB, 40, 180);
+    const s = document.createElement('script');
+    • s.src = 'https://cdnjs.cloudflare.' + 'com/ajax/libs/three.js/r128/three.min.js';
+    s.onload = initGame;
+    document.head.appendChild(s);
 
-    const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 300);
-    const renderer = new THREE.WebGLRenderer({ antialias: true });
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    document.body.appendChild(renderer.domElement);
+    function initGame() {
+      const scene = new THREE.Scene();
+      scene.background = new THREE.Color(0x87CEEB);
+      scene.fog = new THREE.Fog(0x87CEEB, 40, 180);
 
-    const hemiLight = new THREE.HemisphereLight(0xffffff, 0x444444, 0.9);
-    scene.add(hemiLight);
-    const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
-    dirLight.position.set(30, 50, 30);
-    scene.add(dirLight);
+      const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 300);
+      const renderer = new THREE.WebGLRenderer({ antialias: true });
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      document.body.appendChild(renderer.domElement);
 
-    const ground = new THREE.Mesh(
-      new THREE.PlaneGeometry(300, 300),
-      new THREE.MeshLambertMaterial({ color: 0x4CAF50 })
-    );
-    ground.rotation.x = -Math.PI / 2;
-    scene.add(ground);
+      scene.add(new THREE.HemisphereLight(0xffffff, 0x444444, 0.9));
+      const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
+      dirLight.position.set(30, 50, 30);
+      scene.add(dirLight);
 
-    const road = new THREE.Mesh(
-      new THREE.PlaneGeometry(10, 140),
-      new THREE.MeshLambertMaterial({ color: 0x333333 })
-    );
-    road.rotation.x = -Math.PI / 2;
-    road.position.set(0, 0.02, -30);
-    scene.add(road);
+      const ground = new THREE.Mesh(new THREE.PlaneGeometry(300, 300), new THREE.MeshLambertMaterial({ color: 0x4CAF50 }));
+      ground.rotation.x = -Math.PI / 2;
+      scene.add(ground);
 
-    const mudTrack = new THREE.Mesh(
-      new THREE.PlaneGeometry(40, 120),
-      new THREE.MeshLambertMaterial({ color: 0x8D6E63 })
-    );
-    mudTrack.rotation.x = -Math.PI / 2;
-    mudTrack.position.set(35, 0.03, -20);
-    scene.add(mudTrack);
+      const road = new THREE.Mesh(new THREE.PlaneGeometry(10, 140), new THREE.MeshLambertMaterial({ color: 0x333333 }));
+      road.rotation.x = -Math.PI / 2;
+      road.position.set(0, 0.02, -30);
+      scene.add(road);
 
-    const bumps = [];
-    for (let i = 0; i < 6; i++) {
-      const bump = new THREE.Mesh(
-        new THREE.CylinderGeometry(4, 7, 2.2, 12),
-        new THREE.MeshLambertMaterial({ color: 0x6D4C41 })
-      );
-      bump.position.set(35 + (i % 2 === 0 ? -6 : 6), 0.8, 20 - i * 18);
-      scene.add(bump);
-      bumps.push(bump);
-    }
+      const mudTrack = new THREE.Mesh(new THREE.PlaneGeometry(40, 120), new THREE.MeshLambertMaterial({ color: 0x8D6E63 }));
+      mudTrack.rotation.x = -Math.PI / 2;
+      mudTrack.position.set(35, 0.03, -20);
+      scene.add(mudTrack);
 
-    const home = new THREE.Group();
-    const homeBody = new THREE.Mesh(new THREE.BoxGeometry(10, 6, 10), new THREE.MeshLambertMaterial({ color: 0xFFE082 }));
-    homeBody.position.y = 3;
-    const homeRoof = new THREE.Mesh(new THREE.ConeGeometry(8, 4, 4), new THREE.MeshLambertMaterial({ color: 0xD84315 }));
-    homeRoof.position.y = 8;
-    homeRoof.rotation.y = Math.PI / 4;
-    home.add(homeBody, homeRoof);
-    home.position.set(-12, 0, 25);
-    scene.add(home);
-
-    const school = new THREE.Group();
-    const schoolBody = new THREE.Mesh(new THREE.BoxGeometry(22, 9, 12), new THREE.MeshLambertMaterial({ color: 0xFF7043 }));
-    schoolBody.position.y = 4.5;
-    const schoolBoard = new THREE.Mesh(new THREE.BoxGeometry(8, 2, 0.5), new THREE.MeshLambertMaterial({ color: 0x1E88E5 }));
-    schoolBoard.position.set(0, 7.5, 6.2);
-    school.add(schoolBody, schoolBoard);
-    school.position.set(0, 0, -95);
-    scene.add(school);
-        function createKid(shirtColor, x, z) {
-      const kid = new THREE.Group();
-      const body = new THREE.Mesh(new THREE.CylinderGeometry(0.45, 0.45, 1.4, 12), new THREE.MeshLambertMaterial({ color: shirtColor }));
-      body.position.y = 1.1;
-      const head = new THREE.Mesh(new THREE.SphereGeometry(0.4, 12, 12), new THREE.MeshLambertMaterial({ color: 0xFFCCBC }));
-      head.position.y = 2.1;
-      kid.add(body, head);
-      kid.position.set(x, 0, z);
-      scene.add(kid);
-      return kid;
-    }
-
-    createKid(0x2196F3, -5, -82);
-    createKid(0xE91E63, -2, -83);
-    createKid(0x9C27B0, 3, -82);
-    createKid(0xFFEB3B, 6, -84);
-
-    const dog = new THREE.Group();
-    const dogBody = new THREE.Mesh(new THREE.BoxGeometry(0.7, 0.7, 1.5), new THREE.MeshLambertMaterial({ color: 0x212121 }));
-    dogBody.position.y = 0.6;
-    const dogHead = new THREE.Mesh(new THREE.BoxGeometry(0.55, 0.55, 0.6), new THREE.MeshLambertMaterial({ color: 0xD7A86E }));
-    dogHead.position.set(0, 1.0, -0.8);
-    dog.add(dogBody, dogHead);
-    dog.position.set(-3, 0, 22);
-    scene.add(dog);
-
-    const player = new THREE.Group();
-    const cycleGroup = new THREE.Group();
-    const frame = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.8, 2.0), new THREE.MeshLambertMaterial({ color: 0x00BCD4 }));
-    frame.position.y = 0.9;
-    const rider = createKid(0xFF1744, 0, 0.3);
-    rider.position.y = 0.3;
-    cycleGroup.add(frame, rider);
-
-    const jeepGroup = new THREE.Group();
-    const jeepBody = new THREE.Mesh(new THREE.BoxGeometry(2.4, 1.2, 4.0), new THREE.MeshLambertMaterial({ color: 0x2E7D32 }));
-    jeepBody.position.y = 1.0;
-    const jeepCabin = new THREE.Mesh(new THREE.BoxGeometry(2.1, 1.0, 2.0), new THREE.MeshLambertMaterial({ color: 0x1B5E20 }));
-    jeepCabin.position.set(0, 2.0, 0.3);
-    jeepGroup.add(jeepBody, jeepCabin);
-    jeepGroup.visible = false;
-
-    player.add(cycleGroup, jeepGroup);
-    player.position.set(0, 0, 25);
-    scene.add(player);
-
-    let isJeep = false;
-    document.getElementById('switchBtn').addEventListener('click', () => {
-      isJeep = !isJeep;
-      cycleGroup.visible = !isJeep;
-      jeepGroup.visible = isJeep;
-    });
-
-    const coins = [];
-    const coinPositions = [[0, 10], [0, -10], [0, -35], [0, -60], [0, -80], [35, 10], [35, -5], [41, -18], [29, -36], [35, -55]];
-    coinPositions.forEach(pos => {
-      const coin = new THREE.Mesh(
-        new THREE.CylinderGeometry(0.8, 0.8, 0.25, 16),
-        new THREE.MeshLambertMaterial({ color: 0xFFD700 })
-      );
-      coin.rotation.x = Math.PI / 2;
-      coin.position.set(pos[0], 1.2, pos[1]);
-      scene.add(coin);
-      coins.push(coin);
-    });
-
-    const keys = { up: false, down: false, left: false, right: false };
-    function bindBtn(id, key) {
-      const el = document.getElementById(id);
-      el.addEventListener('touchstart', (e) => { e.preventDefault(); keys[key] = true; });
-      el.addEventListener('touchend', (e) => { e.preventDefault(); keys[key] = false; });
-      el.addEventListener('mousedown', () => keys[key] = true);
-      el.addEventListener('mouseup', () => keys[key] = false);
-    }
-    bindBtn('upBtn', 'up');
-    bindBtn('downBtn', 'down');
-    bindBtn('leftBtn', 'left');
-    bindBtn('rightBtn', 'right');
-
-    let speed = 0;
-    let score = 0;
-
-    function animate() {
-      requestAnimationFrame(animate);
-      const maxSpeed = isJeep ? 0.55 : 0.35;
-      if (keys.up) speed = Math.min(speed + 0.02, maxSpeed);
-      else if (keys.down) speed = Math.max(speed - 0.02, -0.2);
-      else speed *= 0.92;
-
-      if (Math.abs(speed) > 0.01) {
-        if (keys.left) player.rotation.y += 0.04;
-        if (keys.right) player.rotation.y -= 0.04;
+      const bumps = new Array();
+      for (let i = 0; i < 6; i++) {
+        const bump = new THREE.Mesh(new THREE.CylinderGeometry(4, 7, 2.2, 12), new THREE.MeshLambertMaterial({ color: 0x6D4C41 }));
+        bump.position.set(35 + (i % 2 === 0 ? -6 : 6), 0.8, 20 - i * 18);
+        scene.add(bump);
+        bumps.push(bump);
       }
 
-      player.position.x -= Math.sin(player.rotation.y) * speed;
-      player.position.z -= Math.cos(player.rotation.y) * speed;
+      const home = new THREE.Group();
+      const homeBody = new THREE.Mesh(new THREE.BoxGeometry(10, 6, 10), new THREE.MeshLambertMaterial({ color: 0xFFE082 }));
+      homeBody.position.y = 3;
+      const homeRoof = new THREE.Mesh(new THREE.ConeGeometry(8, 4, 4), new THREE.MeshLambertMaterial({ color: 0xD84315 }));
+      homeRoof.position.y = 8;
+      homeRoof.rotation.y = Math.PI / 4;
+      home.add(homeBody, homeRoof);
+      home.position.set(-12, 0, 25);
+      scene.add(home);
 
-      let targetY = 0;
-      bumps.forEach(b => {
-        if (player.position.distanceTo(b.position) < 5.5) targetY = 1.4;
+      const school = new THREE.Group();
+      const schoolBody = new THREE.Mesh(new THREE.BoxGeometry(22, 9, 12), new THREE.MeshLambertMaterial({ color: 0xFF7043 }));
+      schoolBody.position.y = 4.5;
+      const schoolBoard = new THREE.Mesh(new THREE.BoxGeometry(8, 2, 0.5), new THREE.MeshLambertMaterial({ color: 0x1E88E5 }));
+      schoolBoard.position.set(0, 7.5, 6.2);
+      school.add(schoolBody, schoolBoard);
+      school.position.set(0, 0, -95);
+      scene.add(school);
+            function createKid(shirtColor, x, z) {
+        const kid = new THREE.Group();
+        const body = new THREE.Mesh(new THREE.CylinderGeometry(0.45, 0.45, 1.4, 12), new THREE.MeshLambertMaterial({ color: shirtColor }));
+        body.position.y = 1.1;
+        const head = new THREE.Mesh(new THREE.SphereGeometry(0.4, 12, 12), new THREE.MeshLambertMaterial({ color: 0xFFCCBC }));
+        head.position.y = 2.1;
+        kid.add(body, head);
+        kid.position.set(x, 0, z);
+        scene.add(kid);
+        return kid;
+      }
+
+      createKid(0x2196F3, -5, -82);
+      createKid(0xE91E63, -2, -83);
+      createKid(0x9C27B0, 3, -82);
+      createKid(0xFFEB3B, 6, -84);
+
+      const dog = new THREE.Group();
+      const dogBody = new THREE.Mesh(new THREE.BoxGeometry(0.7, 0.7, 1.5), new THREE.MeshLambertMaterial({ color: 0x212121 }));
+      dogBody.position.y = 0.6;
+      const dogHead = new THREE.Mesh(new THREE.BoxGeometry(0.55, 0.55, 0.6), new THREE.MeshLambertMaterial({ color: 0xD7A86E }));
+      dogHead.position.set(0, 1.0, -0.8);
+      dog.add(dogBody, dogHead);
+      dog.position.set(-3, 0, 22);
+      scene.add(dog);
+
+      const player = new THREE.Group();
+      const cycleGroup = new THREE.Group();
+      const frame = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.8, 2.0), new THREE.MeshLambertMaterial({ color: 0x00BCD4 }));
+      frame.position.y = 0.9;
+      const rider = createKid(0xFF1744, 0, 0.3);
+      rider.position.y = 0.3;
+      cycleGroup.add(frame, rider);
+
+      const jeepGroup = new THREE.Group();
+      const jeepBody = new THREE.Mesh(new THREE.BoxGeometry(2.4, 1.2, 4.0), new THREE.MeshLambertMaterial({ color: 0x2E7D32 }));
+      jeepBody.position.y = 1.0;
+      const jeepCabin = new THREE.Mesh(new THREE.BoxGeometry(2.1, 1.0, 2.0), new THREE.MeshLambertMaterial({ color: 0x1B5E20 }));
+      jeepCabin.position.set(0, 2.0, 0.3);
+      jeepGroup.add(jeepBody, jeepCabin);
+      jeepGroup.visible = false;
+
+      player.add(cycleGroup, jeepGroup);
+      player.position.set(0, 0, 25);
+      scene.add(player);
+
+      let isJeep = false;
+      document.getElementById('switchBtn').addEventListener('click', () => {
+        isJeep = !isJeep;
+        cycleGroup.visible = !isJeep;
+        jeepGroup.visible = isJeep;
       });
-      player.position.y += (targetY - player.position.y) * 0.15;
 
-      const dogTargetX = player.position.x + 2.2;
-      const dogTargetZ = player.position.z + 2.2;
-      dog.position.x += (dogTargetX - dog.position.x) * 0.04;
-      dog.position.z += (dogTargetZ - dog.position.z) * 0.04;
-      dog.lookAt(player.position.x, 0.5, player.position.z);
+      const coins = new Array();
+      const cx = new Array(0, 0, 0, 0, 0, 35, 35, 41, 29, 35);
+      const cz = new Array(10, -10, -35, -60, -80, 10, -5, -18, -36, -55);
+      for (let i = 0; i < 10; i++) {
+        const coin = new THREE.Mesh(new THREE.CylinderGeometry(0.8, 0.8, 0.25, 16), new THREE.MeshLambertMaterial({ color: 0xFFD700 }));
+        coin.rotation.x = Math.PI / 2;
+        coin.position.set(cx.at(i), 1.2, cz.at(i));
+        scene.add(coin);
+        coins.push(coin);
+      }
 
-      coins.forEach(c => {
-        if (c.visible) {
-          c.rotation.z += 0.05;
-          if (player.position.distanceTo(c.position) < 2.8) {
-            c.visible = false;
-            score++;
-            document.getElementById('coinCount').innerText = score;
-            if (score === 10) document.getElementById('msg').style.display = 'block';
-          }
+      const keys = { up: false, down: false, left: false, right: false };
+      function bindBtn(id, key) {
+        const el = document.getElementById(id);
+        el.addEventListener('touchstart', (e) => { e.preventDefault(); keys[key] = true; });
+        el.addEventListener('touchend', (e) => { e.preventDefault(); keys[key] = false; });
+        el.addEventListener('mousedown', () => keys[key] = true);
+        el.addEventListener('mouseup', () => keys[key] = false);
+      }
+      bindBtn('upBtn', 'up');
+      bindBtn('downBtn', 'down');
+      bindBtn('leftBtn', 'left');
+      bindBtn('rightBtn', 'right');
+
+      let speed = 0;
+      let score = 0;
+
+      function animate() {
+        requestAnimationFrame(animate);
+        const maxSpeed = isJeep ? 0.55 : 0.35;
+        if (keys.up) speed = Math.min(speed + 0.02, maxSpeed);
+        else if (keys.down) speed = Math.max(speed - 0.02, -0.2);
+        else speed *= 0.92;
+
+        if (Math.abs(speed) > 0.01) {
+          if (keys.left) player.rotation.y += 0.04;
+          if (keys.right) player.rotation.y -= 0.04;
         }
-      });
 
-      const camOffset = new THREE.Vector3(0, 7, 13).applyMatrix4(player.matrixWorld);
-      camera.position.lerp(camOffset, 0.1);
-      camera.lookAt(player.position.x, player.position.y + 1.5, player.position.z);
-      renderer.render(scene, camera);
+        player.position.x -= Math.sin(player.rotation.y) * speed;
+        player.position.z -= Math.cos(player.rotation.y) * speed;
+
+        let targetY = 0;
+        bumps.forEach(b => {
+          if (player.position.distanceTo(b.position) < 5.5) targetY = 1.4;
+        });
+        player.position.y += (targetY - player.position.y) * 0.15;
+
+        dog.position.x += (player.position.x + 2.2 - dog.position.x) * 0.04;
+        dog.position.z += (player.position.z + 2.2 - dog.position.z) * 0.04;
+        dog.lookAt(player.position.x, 0.5, player.position.z);
+
+        coins.forEach(c => {
+          if (c.visible) {
+            c.rotation.z += 0.05;
+            if (player.position.distanceTo(c.position) < 2.8) {
+              c.visible = false;
+              score++;
+              document.getElementById('coinCount').innerText = score;
+              if (score === 10) document.getElementById('msg').style.display = 'block';
+            }
+          }
+        });
+
+        const camOffset = new THREE.Vector3(0, 7, 13).applyMatrix4(player.matrixWorld);
+        camera.position.lerp(camOffset, 0.1);
+        camera.lookAt(player.position.x, player.position.y + 1.5, player.position.z);
+        renderer.render(scene, camera);
+      }
+      animate();
     }
-    animate();
-
-    window.addEventListener('resize', () => {
-      camera.aspect = window.innerWidth / window.innerHeight;
-      camera.updateProjectionMatrix();
-      renderer.setSize(window.innerWidth, window.innerHeight);
-    });
   </script>
 </body>
 </html>
